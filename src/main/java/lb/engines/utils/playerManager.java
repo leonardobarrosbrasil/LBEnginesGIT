@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public final class PlayerManager {
+public final class playerManager {
 
     private UUID uuid;
 

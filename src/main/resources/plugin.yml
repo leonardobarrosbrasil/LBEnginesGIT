@@ -1,6 +1,6 @@
 name: LBEngines
 version: '${project.version}'
-main: lb.engines.main.MainEngines
+main: lb.engines.main.mainEngines
 api-version: 1.16
 authors: [Dimensions]
 commands:

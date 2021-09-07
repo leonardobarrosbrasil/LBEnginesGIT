@@ -5,7 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FunctionsManager {
+public class functionsManager {
 
     private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 

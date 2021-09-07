@@ -1,7 +1,7 @@
 package lb.engines.utils;
 
 import com.zaxxer.hikari.HikariDataSource;
-import lb.engines.main.MainEngines;
+import lb.engines.main.mainEngines;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.UUID;
 
-public class MysqlManager {
+public class mysqlManager {
 
     protected static Connection connection = null;
 
@@ -19,7 +19,7 @@ public class MysqlManager {
 
     private static HikariDataSource hikariCP;
 
-    private MysqlManager api;
+    private mysqlManager api;
 
     private static final String host = "localhost";
     private static final String port = "3306";
@@ -46,7 +46,7 @@ public class MysqlManager {
             createTables();
         } catch (Exception e) {
             e.printStackTrace();
-            console.sendMessage(FunctionsManager.formatRGB("§aLBMechanism: Database conectada com sucesso."));
+            console.sendMessage(functionsManager.formatRGB("§aLBMechanism: Database conectada com sucesso."));
         }
     }
 
@@ -54,7 +54,7 @@ public class MysqlManager {
         if (connection != null) {
             try {
                 connection.close();
-                console.sendMessage(FunctionsManager.formatRGB("§cLBEngines: Database desconectada com sucesso."));
+                console.sendMessage(functionsManager.formatRGB("§cLBEngines: Database desconectada com sucesso."));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -67,19 +67,19 @@ public class MysqlManager {
                 connection = hikariCP.getConnection();
                 stm = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER)");
                 stm.executeUpdate();
-                console.sendMessage(FunctionsManager.formatRGB("&aLBEngines: As tabelas carregadas com sucesso."));
+                console.sendMessage(functionsManager.formatRGB("&aLBEngines: As tabelas carregadas com sucesso."));
             } catch (Exception e) {
                 e.printStackTrace();
-                console.sendMessage(FunctionsManager.formatRGB("&aLBEngines: As tabelas não foram carregadas."));
+                console.sendMessage(functionsManager.formatRGB("&aLBEngines: As tabelas não foram carregadas."));
             }
     }
 
-    public static void addPlayerToCache(Player player, PlayerManager ps){
-        MainEngines.stats.put(player, ps);
+    public static void addPlayerToCache(UUID uuid, playerManager ps){
+        mainEngines.stats.put(uuid, ps);
     }
 
-    public static PlayerManager getPlayerCached(Player player){
-        return MainEngines.stats.get(player);
+    public static playerManager getPlayerCached(Player player){
+        return mainEngines.stats.get(player);
     }
 
 }
