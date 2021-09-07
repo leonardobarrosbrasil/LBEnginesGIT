@@ -6,11 +6,13 @@ import lb.engines.events.onPlayerQuit;
 import lb.engines.utils.functionsManager;
 import lb.engines.utils.mysqlManager;
 import lb.engines.utils.playerManager;
+import lb.engines.utils.pluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public final class mainEngines extends JavaPlugin {
@@ -18,8 +20,6 @@ public final class mainEngines extends JavaPlugin {
     private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     private static mainEngines instance;
-
-    public static HashMap<UUID, playerManager> stats = new HashMap<>();
 
     public static mainEngines getPlugin() {
         return instance;
@@ -39,7 +39,8 @@ public final class mainEngines extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        mysqlManager.openConnection();
+        pluginManager.getMySQL().openConnection();
+        pluginManager.getMySQL().autoSave();
         registerEvents();
         registerCommands();
         console.sendMessage(functionsManager.formatRGB("&aLBEngines: Plugin habilitado com sucesso."));
@@ -47,7 +48,9 @@ public final class mainEngines extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        mysqlManager.closeConnection();
+        pluginManager.getMySQL().forceSave();
+        pluginManager.getMySQL().closeConnection();
         console.sendMessage(functionsManager.formatRGB("&caLBEngines: Plugin desabilitado com sucesso."));
     }
+
 }

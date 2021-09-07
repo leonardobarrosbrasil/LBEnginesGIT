@@ -1,18 +1,40 @@
 package lb.engines.utils;
 
+import lb.engines.main.mainEngines;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class accountManager extends mysqlManager {
 
-    public static boolean accountExist(OfflinePlayer player) {
+
+    public void saveData(playerManager player) {
+        Bukkit.getScheduler().runTaskAsynchronously(mainEngines.getPlugin(), () -> {
+            setMoney(player.getUUID(), player.getMoney());
+            setKills(player.getUUID(), player.getKills());
+            setDeaths(player.getUUID(), player.getDeaths());
+        });
+    }
+
+    public void loadData(Player player){
+        playerManager stats = new playerManager();
+        stats.setMoney(pluginManager.getAccount().getMoney(player.getUniqueId()));
+        stats.setKills(pluginManager.getAccount().getKills(player.getUniqueId()));
+        stats.setDeaths(pluginManager.getAccount().getDeaths(player.getUniqueId()));
+        pluginManager.getMySQL().addData(player.getUniqueId(), stats);
+    }
+
+    public boolean accountExist(UUID uuid) {
         PreparedStatement stm = null;
         try {
             stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
-            stm.setString(1, player.getUniqueId().toString());
+            stm.setString(1, uuid.toString());
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 return true;
@@ -23,103 +45,95 @@ public class accountManager extends mysqlManager {
         }
     }
 
-    public static void createAccount(OfflinePlayer player) {
-        PreparedStatement stm = null;
+    public void createAccount(UUID uuid) {
         try {
-            stm = connection.prepareStatement("INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`) VALUES (?,?,?,?)");
-            stm.setString(1, player.getUniqueId().toString()); // uuid
+            PreparedStatement stm = connection.prepareStatement("INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`) VALUES (?,?,?,?)");
+            stm.setString(1, uuid.toString()); // uuid
             stm.setDouble(2, 0.0D); // money
             stm.setInt(3, 0); // kills
             stm.setInt(4, 0); // deaths
             stm.executeUpdate();
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao criar o jogador " + player.getName() + "."));
             e.printStackTrace();
         }
     }
 
-    public static double getMoney(OfflinePlayer player) {
+    public double getMoney(UUID uuid) {
         double i = 0.0;
-        PreparedStatement stm = null;
         try {
-            stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
-            stm.setString(1, player.getUniqueId().toString());
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
+            stm.setString(1, uuid.toString());
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 i = rs.getInt("money");
             }
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao ver o dinheiro de " + player.getName() + "."));
+            e.printStackTrace();
         }
         return i;
     }
 
-    public static void setMoney(OfflinePlayer player, Double value) {
-        PreparedStatement stm = null;
+    public void setMoney(UUID uuid, Double value) {
         try {
-            stm = connection.prepareStatement("UPDATE `players` SET `money` = ? WHERE `uuid` = ?");
+            PreparedStatement stm = connection.prepareStatement("UPDATE `players` SET `money` = ? WHERE `uuid` = ?");
             stm.setDouble(1, value);
-            stm.setString(2, player.getUniqueId().toString());
+            stm.setString(2, uuid.toString());
             stm.executeUpdate();
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao definir o dinheiro do jogador " + player.getName() + "."));
+            e.printStackTrace();
         }
     }
 
-    public static Integer getDeaths(OfflinePlayer player) {
+    public Integer getDeaths(UUID uuid) {
         int i = 0;
-        PreparedStatement stm = null;
         try {
-            stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
-            stm.setString(1, player.getUniqueId().toString());
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
+            stm.setString(1, uuid.toString());
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 i = rs.getInt("deaths");
             }
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao ver as mortes de " + player.getName() + "."));
+            e.printStackTrace();
         }
         return i;
     }
 
-    public static void setDeaths(OfflinePlayer player, int value) {
-        PreparedStatement stm = null;
+    public void setDeaths(UUID uuid, int value) {
         try {
-            stm = connection.prepareStatement("UPDATE `players` SET `deaths` = ? WHERE `uuid` = ?");
+            PreparedStatement stm = connection.prepareStatement("UPDATE `players` SET `deaths` = ? WHERE `uuid` = ?");
             stm.setInt(1, value);
-            stm.setString(2, player.getUniqueId().toString());
+            stm.setString(2, uuid.toString());
             stm.executeUpdate();
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao definir as mortes de " + player.getName() + "."));
+            e.printStackTrace();
         }
     }
 
-    public static Integer getKills(OfflinePlayer player) {
+    public Integer getKills(UUID uuid) {
         int i = 0;
-        PreparedStatement stm = null;
         try {
-            stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
-            stm.setString(1, player.getUniqueId().toString());
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM `players` WHERE `uuid` = ?");
+            stm.setString(1, uuid.toString());
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 i = rs.getInt("kills");
             }
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao ver as mortes de " + player.getName() + "."));
+            e.printStackTrace();
         }
         return i;
     }
 
 
-    public static void setKills(OfflinePlayer player, int value) {
-        PreparedStatement stm = null;
+    public void setKills(UUID uuid, int value) {
         try {
-            stm = connection.prepareStatement("UPDATE `players` SET `kills` = ? WHERE `uuid` = ?");
+            PreparedStatement stm = connection.prepareStatement("UPDATE `players` SET `kills` = ? WHERE `uuid` = ?");
             stm.setInt(1, value);
-            stm.setString(2, player.getUniqueId().toString());
+            stm.setString(2, uuid.toString());
             stm.executeUpdate();
         } catch (SQLException e) {
-            console.sendMessage(functionsManager.formatRGB("§cLBEngines: Ocorreu um erro ao definir as mortes de " + player.getName() + "."));
+            e.printStackTrace();
         }
     }
 }

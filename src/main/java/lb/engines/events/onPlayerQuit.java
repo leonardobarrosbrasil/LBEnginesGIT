@@ -1,8 +1,8 @@
 package lb.engines.events;
 
 import lb.engines.main.mainEngines;
-import lb.engines.utils.accountManager;
 import lb.engines.utils.playerManager;
+import lb.engines.utils.pluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -17,16 +17,11 @@ public class onPlayerQuit implements Listener {
     @EventHandler
     public void onLogin(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        playerManager stats = mainEngines.stats.get(player.getUniqueId());
-        Bukkit.getScheduler().scheduleSyncDelayedTask(mainEngines.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                accountManager.setMoney(player, stats.getMoney());
-                accountManager.setKills(player, stats.getKills());
-                accountManager.setDeaths(player, stats.getDeaths());
-                mainEngines.stats.remove(player.getUniqueId());
-            }
+        if(!pluginManager.getMySQL().hasData(player.getUniqueId())) return;
+        Bukkit.getScheduler().runTaskAsynchronously(mainEngines.getPlugin(), () -> {
+            playerManager data = pluginManager.getMySQL().getData(player.getUniqueId());
+            pluginManager.getAccount().saveData(data);
+            pluginManager.getAccount().removeData(player.getUniqueId());
         });
-        console.sendMessage("§aConfigurações de " + player.getName() + " salvas com sucesso.");
     }
 }

@@ -4,30 +4,26 @@ import com.zaxxer.hikari.HikariDataSource;
 import lb.engines.main.mainEngines;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class mysqlManager {
 
-    protected static Connection connection = null;
+    protected Connection connection = null;
 
-    public static ConsoleCommandSender console = Bukkit.getConsoleSender();
+    public ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    private static HikariDataSource hikariCP;
+    private HikariDataSource hikariCP;
 
-    private mysqlManager api;
+    public HashMap<UUID, playerManager> stats = new HashMap<>();
 
-    private static final String host = "localhost";
-    private static final String port = "3306";
-    private static final String user = "root";
-    private static final String database = "phpmyadmin";
-    private static final String password = "";
-
-    public static void openConnection() {
+    public void openConnection() {
         try {
             hikariCP = new HikariDataSource();
             hikariCP.setIdleTimeout(870000000);
@@ -38,10 +34,15 @@ public class mysqlManager {
             hikariCP.setMaximumPoolSize(10);
             hikariCP.setConnectionTestQuery("SELECT 1");
             hikariCP.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+            String host = "localhost";
             hikariCP.addDataSourceProperty("serverName", host);
+            String port = "3306";
             hikariCP.addDataSourceProperty("port", port);
+            String database = "phpmyadmin";
             hikariCP.addDataSourceProperty("databaseName", database);
+            String user = "root";
             hikariCP.addDataSourceProperty("user", user);
+            String password = "";
             hikariCP.addDataSourceProperty("password", password);
             createTables();
         } catch (Exception e) {
@@ -50,7 +51,7 @@ public class mysqlManager {
         }
     }
 
-    public static void closeConnection() {
+    public void closeConnection() {
         if (connection != null) {
             try {
                 connection.close();
@@ -61,11 +62,10 @@ public class mysqlManager {
         }
     }
 
-    public static void createTables() {
-            PreparedStatement stm = null;
+    public void createTables() {
             try {
                 connection = hikariCP.getConnection();
-                stm = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER)");
+                PreparedStatement stm = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER)");
                 stm.executeUpdate();
                 console.sendMessage(functionsManager.formatRGB("&aLBEngines: As tabelas carregadas com sucesso."));
             } catch (Exception e) {
@@ -74,12 +74,52 @@ public class mysqlManager {
             }
     }
 
-    public static void addPlayerToCache(UUID uuid, playerManager ps){
-        mainEngines.stats.put(uuid, ps);
+    public void autoSave() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(mainEngines.getPlugin(), () -> {
+            for (playerManager allData : pluginManager.getMySQL().getAllDatas()) {
+                pluginManager.getAccount().saveData(allData);
+            }
+        },600 * 20L);
     }
 
-    public static playerManager getPlayerCached(Player player){
-        return mainEngines.stats.get(player);
+    public void forceSave() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(mainEngines.getPlugin(), () -> {
+            for (playerManager allData : pluginManager.getMySQL().getAllDatas()) {
+                pluginManager.getAccount().saveData(allData);
+            }
+        });
+    }
+
+    public void addData(UUID uuid, playerManager ps){
+       stats.put(uuid, ps);
+    }
+
+    public Boolean removeData(UUID uuid){
+        if(!stats.containsKey(uuid)){
+            return false;
+        }
+        stats.remove(uuid);
+        return true;
+    }
+
+    public Boolean hasData(UUID uuid){
+        return stats.containsKey(uuid);
+    }
+
+    public playerManager getData(UUID uuid){
+        return stats.get(uuid);
+    }
+
+    public Collection<playerManager> getAllDatas(){
+        return stats.values();
+    }
+
+    public void clearCache() {
+        stats.clear();
+    }
+
+    public Map<UUID, playerManager> getDatas() {
+        return stats;
     }
 
 }
