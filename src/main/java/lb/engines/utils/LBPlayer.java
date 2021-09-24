@@ -4,13 +4,19 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public final class playerManager {
+public class LBPlayer {
 
     private UUID uuid;
 
     private double money = 0.0;
     private int kills = 0;
     private int deaths = 0;
+
+    //private int level = 0;
+    //private int exp = 0;
+
+    //private int eventWins = 0;
+    //private int eventParticipations = 0;
 
     public void setMoney(double money) {
         this.money = money;
@@ -40,7 +46,7 @@ public final class playerManager {
         return this.uuid;
     }
 
-    public void setUUID(UUID uuid){
-        this.uuid = uuid;
+    public void setUUID(String uuid){
+        this.uuid = UUID.fromString(uuid);
     }
 }
