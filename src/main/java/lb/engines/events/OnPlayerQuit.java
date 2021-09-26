@@ -18,9 +18,9 @@ public class OnPlayerQuit implements Listener {
         Player player = event.getPlayer();
         if (!MainEngines.getPlugin().getManager().hasCache(player.getUniqueId())) return;
         Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
-            MainEngines.getPlugin().getManager().saveData(player.getUniqueId());
+            MainEngines.getPlugin().getMysql().saveData(player.getUniqueId());
             MainEngines.getPlugin().getManager().removeCache(player.getUniqueId());
-            console.sendMessage("§aDados de " + player.getName() + " removidos do servidor.");
+            console.sendMessage("§aLBEngines: Dados de " + player.getName() + " descarregados com sucesso.");
         });
     }
 }

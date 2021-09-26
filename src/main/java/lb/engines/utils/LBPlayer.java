@@ -12,25 +12,25 @@ public class LBPlayer {
     private int kills = 0;
     private int deaths = 0;
 
-    //private int level = 0;
-    //private int exp = 0;
+    private int level = 0;
+    private int exp = 0;
 
-    //private int eventWins = 0;
-    //private int eventParticipations = 0;
+    private int eventWins = 0;
+    private int eventParticipations = 0;
 
     public void setMoney(double money) {
         this.money = money;
     }
 
-    public void setKills(int k){
+    public void setKills(int k) {
         this.kills = k;
     }
 
-    public void setDeaths(int d){
+    public void setDeaths(int d) {
         this.deaths = d;
     }
 
-    public int getKills(){
+    public int getKills() {
         return this.kills;
     }
 
@@ -42,11 +42,43 @@ public class LBPlayer {
         return this.money;
     }
 
-    public UUID getUUID(){
+    public UUID getUUID() {
         return this.uuid;
     }
 
-    public void setUUID(String uuid){
+    public void setUUID(String uuid) {
         this.uuid = UUID.fromString(uuid);
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public int getExp() {
+        return this.exp;
+    }
+
+    public void setEventWins(int eventWins) {
+        this.eventWins = eventWins;
+    }
+
+    public int getEventWins() {
+        return this.eventWins;
+    }
+
+    public void setEventParticipations(int eventParticipations) {
+        this.eventParticipations = eventParticipations;
+    }
+
+    public int getEventParticipations() {
+        return this.eventParticipations;
     }
 }

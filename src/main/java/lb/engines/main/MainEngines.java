@@ -1,18 +1,13 @@
 package lb.engines.main;
 
-import lb.engines.commands.TestCommand;
+import lb.engines.commands.CommandSave;
 import lb.engines.events.OnPlayerJoin;
 import lb.engines.events.OnPlayerQuit;
-import lb.engines.utils.LBFunctions;
 import lb.engines.utils.LBManager;
 import lb.engines.utils.LBMySQL;
-import lb.engines.utils.LBPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Map;
-import java.util.UUID;
 
 public final class MainEngines extends JavaPlugin {
 
@@ -27,35 +22,42 @@ public final class MainEngines extends JavaPlugin {
     private LBMySQL SQL;
     private LBManager Manager;
 
+    public void registerCommands() {
+        CommandSave save = new CommandSave(this, "salvar");
+    }
+
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
         getServer().getPluginManager().registerEvents(new OnPlayerQuit(), this);
-        console.sendMessage(LBFunctions.formatRGB("§aLBEngines: Eventos carregados com sucesso."));
-    }
-
-    public void registerCommands() {
-        TestCommand engines = new TestCommand(this, "lbengines");
-        console.sendMessage(LBFunctions.formatRGB("§aLBEngines: Comandos carregados com sucesso."));
+        console.sendMessage("§aLBEngines: Eventos carregados com sucesso.");
     }
 
     public void registerAutoSave() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
             if (getManager().cacheSize() < 1) return;
             getManager().getCache().forEach((uuid, data) -> {
-                getManager().saveData(uuid);
-                console.sendMessage("§aDados de " + uuid + " salvos no salvamento automatico.");
+                getMysql().saveData(uuid);
             });
-            console.sendMessage("§aSalvamento automatico iniciado.");
-        }, 0L, 20 * 20L);
+            console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database.");
+        }, 300 * 20L, 300 * 20L);
     }
 
     public void forceSave() {
         if (getManager().cacheSize() < 1) return;
         getManager().getCache().forEach((uuid, data) -> {
-            getManager().saveData(uuid);
-            console.sendMessage("§aDados de " + uuid + " salvos no salvamento forcado.");
+            getMysql().saveData(uuid);
         });
-        console.sendMessage("§aSalvamento forcado iniciado.");
+        console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database forcadamente.");
+    }
+
+    public void forceSaveAsync() {
+        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            if (getManager().cacheSize() < 1) return;
+            getManager().getCache().forEach((uuid, data) -> {
+                getMysql().saveData(uuid);
+            });
+            console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database forcadamente.");
+        });
     }
 
     @Override
@@ -64,16 +66,16 @@ public final class MainEngines extends JavaPlugin {
         this.SQL = new LBMySQL();
         this.Manager = new LBManager();
         SQL.createTables();
+        registerCommands();
         registerAutoSave();
         registerEvents();
-        registerCommands();
-        console.sendMessage(LBFunctions.formatRGB("§aLBEngines: Plugin habilitado com sucesso."));
+        console.sendMessage("§aLBEngines: Plugin habilitado com sucesso.");
     }
 
     @Override
     public void onDisable() {
         forceSave();
-        console.sendMessage(LBFunctions.formatRGB("§cLBEngines: Plugin desabilitado com sucesso."));
+        console.sendMessage("§cLBEngines: Plugin desabilitado com sucesso.");
     }
 
 }
