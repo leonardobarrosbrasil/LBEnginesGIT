@@ -6,6 +6,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class LBManager {
@@ -19,7 +20,7 @@ public class LBManager {
             Player target = Bukkit.getServer().getPlayer(uuid);
             if (target == null) return null;
             console.sendMessage("§cLBEngines: Os dados de " + target.getName() + " nao foram carregados corretamente.");
-            Bukkit.getScheduler().runTask(MainEngines.getPlugin(), () -> target.getPlayer().kickPlayer("§cSeus dados não foram carregados corretamente. Reentre no servidor."));
+            Bukkit.getScheduler().runTask(MainEngines.getPlugin(), () -> Objects.requireNonNull(target.getPlayer()).kickPlayer("§cSeus dados não foram carregados corretamente. Reentre no servidor."));
             return null;
         } else {
             return cache.get(uuid);
