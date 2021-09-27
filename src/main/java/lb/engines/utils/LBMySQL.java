@@ -4,14 +4,12 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lb.engines.main.MainEngines;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.ConsoleCommandSender;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.UUID;
 
 public class LBMySQL {
@@ -89,6 +87,34 @@ public class LBMySQL {
         return null;
     }
 
+    public LBPlayer getDatas(UUID uuid) {
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            return MainEngines.getPlugin().getManager().getCached(uuid);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement pstmt = conn.prepareStatement(SELECT_PLAYER);
+                pstmt.setString(1, uuid.toString());
+                ResultSet result = pstmt.executeQuery();
+                if (!result.next()) return null;
+                LBPlayer player = new LBPlayer();
+                player.setUUID(result.getString(1));
+                player.setMoney(result.getDouble(2));
+                player.setKills(result.getInt(3));
+                player.setDeaths(result.getInt(4));
+                player.setLevel(result.getInt(5));
+                player.setExp(result.getInt(6));
+                player.setEventWins(result.getInt(7));
+                player.setEventParticipations(result.getInt(8));
+                result.close();
+                pstmt.close();
+                return player;
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public void createAccount(UUID uuid) {
         try (Connection conn = hikariCP.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(CREATE_PLAYER);
@@ -143,99 +169,132 @@ public class LBMySQL {
 
     public void setMoney(UUID uuid, double value) {
         if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-            LBPlayer stats = MainEngines.getPlugin().getManager().getCached(uuid);
-            stats.setMoney(value);
+            MainEngines.getPlugin().getManager().getCached(uuid).setMoney(value);
         } else {
-            Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
-                try (Connection conn = hikariCP.getConnection()) {
-                    PreparedStatement stm = conn.prepareStatement(SET_MONEY);
-                    stm.setDouble(1, value);
-                    stm.setString(2, String.valueOf(uuid));
-                    stm.executeUpdate();
-                    stm.close();
-                    console.sendMessage("§aLBEngines: O valor `money` de " + uuid + " foi definido para" + value + ".");
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            });
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_MONEY);
+                stm.setDouble(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§aLBEngines: O valor `money` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
-    public void setKills(UUID uuid, int value) {
-        try (Connection conn = hikariCP.getConnection()) {
-            PreparedStatement stm = conn.prepareStatement(SET_KILLS);
-            stm.setInt(1, value);
-            stm.setString(2, String.valueOf(uuid));
-            stm.executeUpdate();
-            stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `kills` de " + uuid + " foi definido para" + value + ".");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public Object setKills(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            MainEngines.getPlugin().getManager().getCached(uuid).setKills(value);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_KILLS);
+                stm.setInt(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§a§aLBEngines: O valor `kills` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 
-    public void setDeaths(UUID uuid, int value) {
-        try (Connection conn = hikariCP.getConnection()) {
-            PreparedStatement stm = conn.prepareStatement(SET_DEATHS);
-            stm.setInt(1, value);
-            stm.setString(2, String.valueOf(uuid));
-            stm.executeUpdate();
-            stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `deaths` de " + uuid + " foi definido para" + value + ".");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public Object setDeaths(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            MainEngines.getPlugin().getManager().getCached(uuid).setDeaths(value);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_DEATHS);
+                stm.setInt(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§a§aLBEngines: O valor `deaths` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 
-    public void setLevel(UUID uuid, int value) {
-        try (Connection conn = hikariCP.getConnection()) {
-            PreparedStatement stm = conn.prepareStatement(SET_LEVEL);
-            stm.setInt(1, value);
-            stm.setString(2, String.valueOf(uuid));
-            stm.executeUpdate();
-            stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `level` de " + uuid + " foi definido para" + value + ".");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public Object setLevel(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            MainEngines.getPlugin().getManager().getCached(uuid).setLevel(value);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_LEVEL);
+                stm.setInt(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§a§aLBEngines: O valor `level` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 
-    public void setExp(UUID uuid, int value) {
-        try (Connection conn = hikariCP.getConnection()) {
-            PreparedStatement stm = conn.prepareStatement(SET_EXP);
-            stm.setInt(1, value);
-            stm.setString(2, String.valueOf(uuid));
-            stm.executeUpdate();
-            stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `exp` de " + uuid + " foi definido para" + value + ".");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public Object setExp(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            MainEngines.getPlugin().getManager().getCached(uuid).setExp(value);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_EXP);
+                stm.setInt(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§a§aLBEngines: O valor `exp` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 
-    public void setEventWins(UUID uuid, int value) {
-        try (Connection conn = hikariCP.getConnection()) {
-            PreparedStatement stm = conn.prepareStatement(SET_EVENTWINS);
-            stm.setInt(1, value);
-            stm.setString(2, String.valueOf(uuid));
-            stm.executeUpdate();
-            stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `eventWins` de " + uuid + " foi definido para" + value + ".");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public Object setEventWins(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            MainEngines.getPlugin().getManager().getCached(uuid).setEventWins(value);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_EVENTWINS);
+                stm.setInt(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§a§aLBEngines: O valor `eventWins` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 
-    public void setEventParticipations(UUID uuid, int value) {
-        try (Connection conn = hikariCP.getConnection()) {
-            PreparedStatement stm = conn.prepareStatement(SET_EVENTPARTICIPATIONS);
-            stm.setInt(1, value);
-            stm.setString(2, String.valueOf(uuid));
-            stm.executeUpdate();
-            stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `eventWins` de " + uuid + " foi definido para" + value + ".");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public Object setEventParticipations(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            MainEngines.getPlugin().getManager().getCached(uuid).setEventParticipations(value);
+        } else {
+            try (Connection conn = hikariCP.getConnection()) {
+                PreparedStatement stm = conn.prepareStatement(SET_EVENTPARTICIPATIONS);
+                stm.setInt(1, value);
+                stm.setString(2, String.valueOf(uuid));
+                stm.executeUpdate();
+                stm.close();
+                console.sendMessage("§a§aLBEngines: O valor `eventWins` de " + uuid + " foi definido para" + value + ".");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import lb.engines.events.OnPlayerJoin;
 import lb.engines.events.OnPlayerQuit;
 import lb.engines.utils.LBManager;
 import lb.engines.utils.LBMySQL;
+import lb.engines.utils.LBPlaceholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -60,6 +61,13 @@ public final class MainEngines extends JavaPlugin {
         });
     }
 
+    public void registerPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new LBPlaceholder(this).register();
+            console.sendMessage("§aLBEngines: PlaceholderAPI registrado com sucesso.");
+        }
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -69,6 +77,7 @@ public final class MainEngines extends JavaPlugin {
         registerCommands();
         registerAutoSave();
         registerEvents();
+        registerPlaceholders();
         console.sendMessage("§aLBEngines: Plugin habilitado com sucesso.");
     }
 

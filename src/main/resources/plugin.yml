@@ -3,6 +3,8 @@ version: '1.0'
 main: lb.engines.main.MainEngines
 api-version: 1.16
 authors: [Dimensions]
+depend:
+  - PlaceholderAPI
 commands:
   salvar:
     permission: lb.admin.save
