@@ -16,6 +16,7 @@ public class OnPlayerJoin implements Listener {
     @EventHandler
     public void onLogin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        if (MainEngines.getPlugin().getManager().hasCache(player.getUniqueId())) return;
         Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
             if (!MainEngines.getPlugin().getMysql().accountExist(player.getUniqueId()))
                 MainEngines.getPlugin().getMysql().createAccount(player.getUniqueId());

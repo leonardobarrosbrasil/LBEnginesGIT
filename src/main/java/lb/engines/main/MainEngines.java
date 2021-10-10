@@ -3,11 +3,13 @@ package lb.engines.main;
 import lb.engines.commands.CommandSave;
 import lb.engines.events.OnPlayerJoin;
 import lb.engines.events.OnPlayerQuit;
+import lb.engines.utils.LBFunctions;
 import lb.engines.utils.LBManager;
 import lb.engines.utils.LBMySQL;
 import lb.engines.utils.LBPlaceholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MainEngines extends JavaPlugin {
@@ -22,6 +24,7 @@ public final class MainEngines extends JavaPlugin {
 
     private LBMySQL SQL;
     private LBManager Manager;
+    private LBFunctions Functions;
 
     public void registerCommands() {
         CommandSave save = new CommandSave(this, "salvar");
@@ -29,15 +32,17 @@ public final class MainEngines extends JavaPlugin {
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
-        getServer().getPluginManager().registerEvents(new OnPlayerQuit(), this);
+        //getServer().getPluginManager().registerEvents(new OnPlayerQuit(), this);
         console.sendMessage("§aLBEngines: Eventos carregados com sucesso.");
     }
 
     public void registerAutoSave() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
-            if (getManager().cacheSize() < 1) return;
+            if (getManager().cacheSize() <= 0) return;
             getManager().getCache().forEach((uuid, data) -> {
                 getMysql().saveData(uuid);
+                Player player = Bukkit.getPlayer(uuid);
+                if (player == null) getManager().removeCache(uuid);
             });
             console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database.");
         }, 300 * 20L, 300 * 20L);
@@ -73,6 +78,7 @@ public final class MainEngines extends JavaPlugin {
         instance = this;
         this.SQL = new LBMySQL();
         this.Manager = new LBManager();
+        this.Functions = new LBFunctions();
         SQL.createTables();
         registerCommands();
         registerAutoSave();
@@ -84,6 +90,7 @@ public final class MainEngines extends JavaPlugin {
     @Override
     public void onDisable() {
         forceSave();
+        SQL.closeConnection();
         console.sendMessage("§cLBEngines: Plugin desabilitado com sucesso.");
     }
 
