@@ -13,12 +13,14 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class LBMySQL {
-    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER)";
-    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations FROM players WHERE uuid = ?";
-    public final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`) VALUES (?,?,?,?,?,?,?,?)";
-    public final String CHECK_PLAYER = "SELECT * FROM `players` WHERE `uuid` = ?";
 
-    public final String SET_ALL = "UPDATE `players` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ? WHERE `uuid` = ?";
+    public final ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER, `fightWins` INTEGER, `fightDefeats` INTEGER)";
+    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations,fightWins,fightDefeats FROM players WHERE uuid = ?";
+    public final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`,`fightWins`,`fightDefeats`) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    public final String CHECK_PLAYER = "SELECT * FROM `players` WHERE `uuid` = ?";
+    public final String SET_ALL = "UPDATE `players` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ?, `fightWins` = ?, `fightDefeats` = ? WHERE `uuid` = ?";
     public final String SET_MONEY = "UPDATE `players` SET `money` = ? WHERE `uuid` = ?";
     public final String SET_KILLS = "UPDATE `players` SET `kills` = ? WHERE `uuid` = ?";
     public final String SET_DEATHS = "UPDATE `players` SET `deaths` = ? WHERE `uuid` = ?";
@@ -26,7 +28,8 @@ public class LBMySQL {
     public final String SET_EXP = "UPDATE `players` SET `exp` = ? WHERE `uuid` = ?";
     public final String SET_EVENTWINS = "UPDATE `players` SET `eventWins` = ? WHERE `uuid` = ?";
     public final String SET_EVENTPARTICIPATIONS = "UPDATE `players` SET `eventParticipations` = ? WHERE `uuid` = ?";
-    public final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    public final String SET_FIGHTWINS = "UPDATE `players` SET `fightWins` = ? WHERE `uuid` = ?";
+    public final String SET_FIGHTDEFEATS = "UPDATE `players` SET `fightDefeats` = ? WHERE `uuid` = ?";
 
     private HikariDataSource hikariCP;
 
@@ -68,7 +71,7 @@ public class LBMySQL {
             PreparedStatement stm = conn.prepareStatement(CREATE_TABLES);
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§aLBEngines: As tabelas carregadas com sucesso.");
+            console.sendMessage("§aLBEngines: As tabelas foram carregadas com sucesso.");
         } catch (Exception e) {
             e.printStackTrace();
             console.sendMessage("§aLBEngines: As tabelas não foram carregadas.");
@@ -90,6 +93,8 @@ public class LBMySQL {
             player.setExp(result.getInt(6));
             player.setEventWins(result.getInt(7));
             player.setEventParticipations(result.getInt(8));
+            player.setFightWins(result.getInt(9));
+            player.setFightDefeats(result.getInt(10));
             result.close();
             pstmt.close();
             return player;
@@ -110,6 +115,8 @@ public class LBMySQL {
             pstmt.setInt(6, 0); // exp
             pstmt.setInt(7, 0); // eventWins
             pstmt.setInt(8, 0); // eventParticipations
+            pstmt.setInt(9, 0); // fightWins
+            pstmt.setInt(10, 0); // fightDefeats
             pstmt.executeUpdate();
             pstmt.close();
         } catch (SQLException ex) {
@@ -143,7 +150,9 @@ public class LBMySQL {
             stm.setInt(5, data.getExp());
             stm.setInt(6, data.getEventWins());
             stm.setInt(7, data.getEventParticipations());
-            stm.setString(8, String.valueOf(uuid));
+            stm.setInt(8, data.getFightWins());
+            stm.setInt(9, data.getFightDefeats());
+            stm.setString(10, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
         } catch (SQLException ex) {
@@ -159,7 +168,7 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§aLBEngines: O valor `money` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§aLBEngines: Valor `money` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -174,7 +183,7 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `kills` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§a§aLBEngines: Valor `kills` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -189,7 +198,7 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `deaths` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§a§aLBEngines: Valor `deaths` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -204,7 +213,7 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `level` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§a§aLBEngines: Valor `level` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -219,7 +228,7 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `exp` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§a§aLBEngines: Valor `exp` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -234,7 +243,7 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `eventWins` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§a§aLBEngines: Valor `eventWins` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -249,7 +258,37 @@ public class LBMySQL {
             stm.setString(2, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§a§aLBEngines: O valor `eventWins` de " + uuid + " foi definido para" + value + ".");
+            console.sendMessage("§a§aLBEngines: Valor `eventWins` de " + uuid + " definido para" + value + ".");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object setFightWins(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        try (Connection conn = hikariCP.getConnection()) {
+            PreparedStatement stm = conn.prepareStatement(SET_FIGHTWINS);
+            stm.setInt(1, value);
+            stm.setString(2, String.valueOf(uuid));
+            stm.executeUpdate();
+            stm.close();
+            console.sendMessage("§a§aLBEngines: Valor `fightWins` de " + uuid + " definido para" + value + ".");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object setFightDefeats(UUID uuid, int value) {
+        if (!accountExist(uuid)) return null;
+        try (Connection conn = hikariCP.getConnection()) {
+            PreparedStatement stm = conn.prepareStatement(SET_FIGHTDEFEATS);
+            stm.setInt(1, value);
+            stm.setString(2, String.valueOf(uuid));
+            stm.executeUpdate();
+            stm.close();
+            console.sendMessage("§a§aLBEngines: Valor `fightDefeats` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

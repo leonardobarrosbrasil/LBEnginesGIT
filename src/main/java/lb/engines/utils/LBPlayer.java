@@ -16,6 +16,9 @@ public class LBPlayer {
     private int eventWins = 0;
     private int eventParticipations = 0;
 
+    private int fightWins = 0;
+    private int fightDefeats = 0;
+
     public void setMoney(double money) {
         this.money = money;
     }
@@ -78,5 +81,21 @@ public class LBPlayer {
 
     public int getEventParticipations() {
         return this.eventParticipations;
+    }
+
+    public int getFightWins() {
+        return this.fightWins;
+    }
+
+    public void setFightWins(int fightWins) {
+        this.fightWins = fightWins;
+    }
+
+    public int getFightDefeats() {
+        return this.fightDefeats;
+    }
+
+    public void setFightDefeats(int fightDefeats) {
+        this.fightDefeats = fightDefeats;
     }
 }

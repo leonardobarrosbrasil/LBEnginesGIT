@@ -18,9 +18,9 @@ public class OnPlayerJoin implements Listener {
         Player player = event.getPlayer();
         if (MainEngines.getPlugin().getManager().hasCache(player.getUniqueId())) return;
         Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
-            if (!MainEngines.getPlugin().getMysql().accountExist(player.getUniqueId()))
-                MainEngines.getPlugin().getMysql().createAccount(player.getUniqueId());
-            MainEngines.getPlugin().getManager().addCache(player.getUniqueId(), MainEngines.getPlugin().getMysql().getData(player.getUniqueId()));
+            if (!MainEngines.getPlugin().getMySQL().accountExist(player.getUniqueId()))
+                MainEngines.getPlugin().getMySQL().createAccount(player.getUniqueId());
+            MainEngines.getPlugin().getManager().addCache(player.getUniqueId(), MainEngines.getPlugin().getMySQL().getData(player.getUniqueId()));
             console.sendMessage("§aLBEngines: Dados de " + player.getName() + " carregados com sucesso.");
         });
     }

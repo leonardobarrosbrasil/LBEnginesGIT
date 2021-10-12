@@ -45,7 +45,7 @@ public final class MainEngines extends JavaPlugin {
                 if (player == null)
                     it.remove();
             }
-            this.console.sendMessage("\u00A7aLBEngines: Salvando todos os dados cacheados na database.");
+            this.console.sendMessage("§aLBEngines: Dados salvos automaticamente.");
         }, 600 * 20L, 600 * 20L);
     }
 
@@ -53,7 +53,7 @@ public final class MainEngines extends JavaPlugin {
         if (getManager().cacheSize() < 1)
             return;
         getManager().getCache().forEach((uuid, data) -> getMySQL().saveData(uuid));
-        this.console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database forcadamente.");
+        this.console.sendMessage("§aLBEngines: Dados salvos forçadamente.");
     }
 
     public void forceSaveAsync() {
@@ -68,14 +68,14 @@ public final class MainEngines extends JavaPlugin {
                 if (player == null)
                     it.remove();
             }
-            this.console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database.");
+            this.console.sendMessage("§aLBEngines: Dados salvos forçadamente.");
         });
     }
 
     public void registerPlaceholders() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new LBPlaceholder(this).register();
-            console.sendMessage("§aLBEngines: PlaceholderAPI registrado com sucesso.");
+            console.sendMessage("§aLBEngines: PlaceholderAPI carregada com sucesso.");
         }
     }
 
