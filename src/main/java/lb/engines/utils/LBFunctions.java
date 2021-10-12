@@ -26,13 +26,13 @@ public class LBFunctions {
             }
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
-                LBPlayer data = MainEngines.getPlugin().getMysql().getData(uuid);
+                LBPlayer data = MainEngines.getPlugin().getMySQL().getData(uuid);
                 if (data.getExp() >= data.getLevel() * 525) {
                     try {
-                        MainEngines.getPlugin().getMysql().setLevel(uuid, data.getLevel() + 1);
-                        MainEngines.getPlugin().getMysql().setExp(uuid, 0);
+                        MainEngines.getPlugin().getMySQL().setLevel(uuid, data.getLevel() + 1);
+                        MainEngines.getPlugin().getMySQL().setExp(uuid, 0);
                     } catch (NullPointerException ex) {
-                        console.sendMessage("§cOcorreu um erro ao tentar upar o nível do jogador. O jogador não foi encontrado na base de dados.");
+                        console.sendMessage("§cLBEngines: Ocorreu um erro ao tentar upar o nível do jogador. O jogador não foi encontrado na base de dados.");
                     }
                 }
             });

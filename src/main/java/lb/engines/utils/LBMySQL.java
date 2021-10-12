@@ -13,10 +13,10 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class LBMySQL {
-    private final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER)";
-    private final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations FROM players WHERE uuid = ?";
-    private final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`) VALUES (?,?,?,?,?,?,?,?)";
-    private final String CHECK_PLAYER = "SELECT * FROM `players` WHERE `uuid` = ?";
+    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER)";
+    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations FROM players WHERE uuid = ?";
+    public final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`) VALUES (?,?,?,?,?,?,?,?)";
+    public final String CHECK_PLAYER = "SELECT * FROM `players` WHERE `uuid` = ?";
 
     public final String SET_ALL = "UPDATE `players` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ? WHERE `uuid` = ?";
     public final String SET_MONEY = "UPDATE `players` SET `money` = ? WHERE `uuid` = ?";
@@ -168,38 +168,30 @@ public class LBMySQL {
 
     public Object setKills(UUID uuid, int value) {
         if (!accountExist(uuid)) return null;
-        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-            MainEngines.getPlugin().getManager().getCached(uuid).setKills(value);
-        } else {
-            try (Connection conn = hikariCP.getConnection()) {
-                PreparedStatement stm = conn.prepareStatement(SET_KILLS);
-                stm.setInt(1, value);
-                stm.setString(2, String.valueOf(uuid));
-                stm.executeUpdate();
-                stm.close();
-                console.sendMessage("§a§aLBEngines: O valor `kills` de " + uuid + " foi definido para" + value + ".");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        try (Connection conn = hikariCP.getConnection()) {
+            PreparedStatement stm = conn.prepareStatement(SET_KILLS);
+            stm.setInt(1, value);
+            stm.setString(2, String.valueOf(uuid));
+            stm.executeUpdate();
+            stm.close();
+            console.sendMessage("§a§aLBEngines: O valor `kills` de " + uuid + " foi definido para" + value + ".");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return null;
     }
 
     public Object setDeaths(UUID uuid, int value) {
         if (!accountExist(uuid)) return null;
-        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-            MainEngines.getPlugin().getManager().getCached(uuid).setDeaths(value);
-        } else {
-            try (Connection conn = hikariCP.getConnection()) {
-                PreparedStatement stm = conn.prepareStatement(SET_DEATHS);
-                stm.setInt(1, value);
-                stm.setString(2, String.valueOf(uuid));
-                stm.executeUpdate();
-                stm.close();
-                console.sendMessage("§a§aLBEngines: O valor `deaths` de " + uuid + " foi definido para" + value + ".");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        try (Connection conn = hikariCP.getConnection()) {
+            PreparedStatement stm = conn.prepareStatement(SET_DEATHS);
+            stm.setInt(1, value);
+            stm.setString(2, String.valueOf(uuid));
+            stm.executeUpdate();
+            stm.close();
+            console.sendMessage("§a§aLBEngines: O valor `deaths` de " + uuid + " foi definido para" + value + ".");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return null;
     }

@@ -2,15 +2,13 @@ package lb.engines.main;
 
 import lb.engines.commands.CommandSave;
 import lb.engines.events.OnPlayerJoin;
-import lb.engines.events.OnPlayerQuit;
-import lb.engines.utils.LBFunctions;
-import lb.engines.utils.LBManager;
-import lb.engines.utils.LBMySQL;
-import lb.engines.utils.LBPlaceholder;
+import lb.engines.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Iterator;
 
 public final class MainEngines extends JavaPlugin {
 
@@ -32,37 +30,45 @@ public final class MainEngines extends JavaPlugin {
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
-        //getServer().getPluginManager().registerEvents(new OnPlayerQuit(), this);
         console.sendMessage("§aLBEngines: Eventos carregados com sucesso.");
     }
 
     public void registerAutoSave() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
-            if (getManager().cacheSize() <= 0) return;
-            getManager().getCache().forEach((uuid, data) -> {
-                getMysql().saveData(uuid);
-                Player player = Bukkit.getPlayer(uuid);
-                if (player == null) getManager().removeCache(uuid);
-            });
-            console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database.");
-        }, 300 * 20L, 300 * 20L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            if (getManager().cacheSize() <= 0)
+                return;
+            Iterator<LBPlayer> it = getManager().getCache().values().iterator();
+            while (it.hasNext()) {
+                LBPlayer data = it.next();
+                getMySQL().saveData(data.getUUID());
+                Player player = Bukkit.getPlayer(data.getUUID());
+                if (player == null)
+                    it.remove();
+            }
+            this.console.sendMessage("\u00A7aLBEngines: Salvando todos os dados cacheados na database.");
+        }, 600 * 20L, 600 * 20L);
     }
 
     public void forceSave() {
-        if (getManager().cacheSize() < 1) return;
-        getManager().getCache().forEach((uuid, data) -> {
-            getMysql().saveData(uuid);
-        });
-        console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database forcadamente.");
+        if (getManager().cacheSize() < 1)
+            return;
+        getManager().getCache().forEach((uuid, data) -> getMySQL().saveData(uuid));
+        this.console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database forcadamente.");
     }
 
     public void forceSaveAsync() {
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            if (getManager().cacheSize() < 1) return;
-            getManager().getCache().forEach((uuid, data) -> {
-                getMysql().saveData(uuid);
-            });
-            console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database forcadamente.");
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            if (getManager().cacheSize() <= 0)
+                return;
+            Iterator<LBPlayer> it = getManager().getCache().values().iterator();
+            while (it.hasNext()) {
+                LBPlayer data = it.next();
+                getMySQL().saveData(data.getUUID());
+                Player player = Bukkit.getPlayer(data.getUUID());
+                if (player == null)
+                    it.remove();
+            }
+            this.console.sendMessage("§aLBEngines: Salvando todos os dados cacheados na database.");
         });
     }
 
@@ -94,4 +100,15 @@ public final class MainEngines extends JavaPlugin {
         console.sendMessage("§cLBEngines: Plugin desabilitado com sucesso.");
     }
 
+    public LBMySQL getMySQL() {
+        return SQL;
+    }
+
+    public LBManager getManager() {
+        return Manager;
+    }
+
+    public LBFunctions getFunctions() {
+        return Functions;
+    }
 }
