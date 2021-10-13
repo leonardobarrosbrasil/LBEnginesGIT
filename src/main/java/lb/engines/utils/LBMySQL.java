@@ -71,10 +71,9 @@ public class LBMySQL {
             PreparedStatement stm = conn.prepareStatement(CREATE_TABLES);
             stm.executeUpdate();
             stm.close();
-            console.sendMessage("§aLBEngines: As tabelas foram carregadas com sucesso.");
+            console.sendMessage("§aLBEngines: Tabelas carregadas com sucesso.");
         } catch (Exception e) {
             e.printStackTrace();
-            console.sendMessage("§aLBEngines: As tabelas não foram carregadas.");
         }
     }
 

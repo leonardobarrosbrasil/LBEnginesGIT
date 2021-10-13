@@ -90,14 +90,14 @@ public final class MainEngines extends JavaPlugin {
         registerAutoSave();
         registerEvents();
         registerPlaceholders();
-        console.sendMessage("§aLBEngines: Plugin habilitado com sucesso.");
+        console.sendMessage("§aLBEngines: Plugin carregado com sucesso.");
     }
 
     @Override
     public void onDisable() {
         forceSave();
         SQL.closeConnection();
-        console.sendMessage("§cLBEngines: Plugin desabilitado com sucesso.");
+        console.sendMessage("§cLBEngines: Plugin descarregado com sucesso.");
     }
 
     public LBMySQL getMySQL() {
