@@ -19,6 +19,8 @@ public class LBPlayer {
     private int fightWins = 0;
     private int fightDefeats = 0;
 
+    private UUID partner;
+
     public void setMoney(double money) {
         this.money = money;
     }
@@ -97,5 +99,13 @@ public class LBPlayer {
 
     public void setFightDefeats(int fightDefeats) {
         this.fightDefeats = fightDefeats;
+    }
+
+    public UUID getPartner() {
+        return this.partner;
+    }
+
+    public void setPartner(String partner) {
+        this.partner = UUID.fromString(partner);
     }
 }

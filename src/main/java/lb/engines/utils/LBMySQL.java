@@ -16,11 +16,11 @@ public class LBMySQL {
 
     public final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER, `fightWins` INTEGER, `fightDefeats` INTEGER)";
-    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations,fightWins,fightDefeats FROM players WHERE uuid = ?";
-    public final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`,`fightWins`,`fightDefeats`) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER, `fightWins` INTEGER, `fightDefeats` INTEGER, `partner` varchar(255))";
+    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations,fightWins,fightDefeats,partner FROM players WHERE uuid = ?";
+    public final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`,`fightWins`,`fightDefeats`,`partner`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
     public final String CHECK_PLAYER = "SELECT * FROM `players` WHERE `uuid` = ?";
-    public final String SET_ALL = "UPDATE `players` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ?, `fightWins` = ?, `fightDefeats` = ? WHERE `uuid` = ?";
+    public final String SET_ALL = "UPDATE `players` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ?, `fightWins` = ?, `fightDefeats` = ?, `partner` = ? WHERE `uuid` = ?";
     public final String SET_MONEY = "UPDATE `players` SET `money` = ? WHERE `uuid` = ?";
     public final String SET_KILLS = "UPDATE `players` SET `kills` = ? WHERE `uuid` = ?";
     public final String SET_DEATHS = "UPDATE `players` SET `deaths` = ? WHERE `uuid` = ?";
@@ -30,6 +30,7 @@ public class LBMySQL {
     public final String SET_EVENTPARTICIPATIONS = "UPDATE `players` SET `eventParticipations` = ? WHERE `uuid` = ?";
     public final String SET_FIGHTWINS = "UPDATE `players` SET `fightWins` = ? WHERE `uuid` = ?";
     public final String SET_FIGHTDEFEATS = "UPDATE `players` SET `fightDefeats` = ? WHERE `uuid` = ?";
+    public final String SET_PARTNER = "UPDATE `players` SET `partner` = ? WHERE `uuid` = ?";
 
     private HikariDataSource hikariCP;
 
@@ -94,6 +95,7 @@ public class LBMySQL {
             player.setEventParticipations(result.getInt(8));
             player.setFightWins(result.getInt(9));
             player.setFightDefeats(result.getInt(10));
+            player.setPartner(result.getString(11));
             result.close();
             pstmt.close();
             return player;
@@ -116,6 +118,7 @@ public class LBMySQL {
             pstmt.setInt(8, 0); // eventParticipations
             pstmt.setInt(9, 0); // fightWins
             pstmt.setInt(10, 0); // fightDefeats
+            pstmt.setString(11, null); // fightDefeats
             pstmt.executeUpdate();
             pstmt.close();
         } catch (SQLException ex) {
@@ -151,7 +154,8 @@ public class LBMySQL {
             stm.setInt(7, data.getEventParticipations());
             stm.setInt(8, data.getFightWins());
             stm.setInt(9, data.getFightDefeats());
-            stm.setString(10, String.valueOf(uuid));
+            stm.setString(10, String.valueOf(data.getPartner()));
+            stm.setString(11, String.valueOf(uuid));
             stm.executeUpdate();
             stm.close();
         } catch (SQLException ex) {
@@ -288,6 +292,21 @@ public class LBMySQL {
             stm.executeUpdate();
             stm.close();
             console.sendMessage("§a§aLBEngines: Valor `fightDefeats` de " + uuid + " definido para" + value + ".");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object setPartner(UUID uuid, UUID value) {
+        if (!accountExist(uuid)) return null;
+        try (Connection conn = hikariCP.getConnection()) {
+            PreparedStatement stm = conn.prepareStatement(SET_PARTNER);
+            stm.setString(1, String.valueOf(value));
+            stm.setString(2, String.valueOf(uuid));
+            stm.executeUpdate();
+            stm.close();
+            console.sendMessage("§a§aLBEngines: Valor `partner` de " + uuid + " definido para" + value + ".");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
