@@ -19,6 +19,8 @@ public class LBPlayer {
     private int fightWins = 0;
     private int fightDefeats = 0;
 
+    private int questsPoints = 0;
+
     private UUID partner;
 
     public void setMoney(double money) {
@@ -107,5 +109,13 @@ public class LBPlayer {
 
     public void setPartner(String partner) {
         this.partner = UUID.fromString(partner);
+    }
+
+    public int getQuestsPoints() {
+        return this.questsPoints;
+    }
+
+    public void setQuestsPoints(int questsPoints) {
+        this.questsPoints = questsPoints;
     }
 }

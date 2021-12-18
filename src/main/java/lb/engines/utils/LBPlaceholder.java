@@ -39,7 +39,7 @@ public class LBPlaceholder extends PlaceholderExpansion {
         switch (params) {
             case "weddingtag":
                 if (!data.getPartner().equals(player.getUniqueId())) return "[❤]";
-            case "wedding":
+            case "weddingpartner":
                 if (data.getPartner().equals(player.getUniqueId())) return "ninguém";
                 return Bukkit.getOfflinePlayer(data.getPartner()).getName();
             case "leveltag":

@@ -5,22 +5,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.UUID;
 
 public class LBManager {
 
     private static final HashMap<UUID, LBPlayer> cache = new HashMap<>();
 
-    private static final Map<UUID, Map<String, LBHomes>> homesCache = new HashMap<>();
-
     public ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     public LBPlayer getCached(UUID uuid) {
         if (!cache.containsKey(uuid)) {
-            Player target = Bukkit.getServer().getPlayer(uuid);
-            if (target == null) return null;
-            console.sendMessage("§cLBEngines: Os dados de " + target.getName() + " nao foram carregados corretamente.");
-            Bukkit.getScheduler().runTask(MainEngines.getPlugin(), () -> Objects.requireNonNull(target.getPlayer()).kickPlayer("§cSeus dados não foram carregados corretamente. Reentre no servidor."));
+            Player player = Bukkit.getServer().getPlayer(uuid);
+            if (player == null) return null;
+            console.sendMessage("§cLBEngines: Os dados de " + player.getName() + " nao foram carregados corretamente.");
+            Bukkit.getScheduler().runTask(MainEngines.getPlugin(), () -> Objects.requireNonNull(player.getPlayer()).kickPlayer("§cSeus dados não foram carregados corretamente. Reentre no servidor."));
             return null;
         } else {
             return cache.get(uuid);

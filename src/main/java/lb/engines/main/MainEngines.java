@@ -35,7 +35,7 @@ public final class MainEngines extends JavaPlugin {
 
     public void registerAutoSave() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            if (getManager().cacheSize() <= 0)
+            if (getManager().cacheSize() < 1)
                 return;
             Iterator<LBPlayer> it = getManager().getCache().values().iterator();
             while (it.hasNext()) {
@@ -58,7 +58,7 @@ public final class MainEngines extends JavaPlugin {
 
     public void forceSaveAsync() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            if (getManager().cacheSize() <= 0)
+            if (getManager().cacheSize() < 1)
                 return;
             Iterator<LBPlayer> it = getManager().getCache().values().iterator();
             while (it.hasNext()) {

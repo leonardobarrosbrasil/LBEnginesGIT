@@ -14,22 +14,22 @@ public class LBFunctions {
 
     public void isElegible(UUID uuid) {
         if (MainEngines.getPlugin().getManager().hasCache(uuid)) {
-            LBPlayer data = MainEngines.getPlugin().getManager().getCache(uuid);
-            if (data.getExp() >= data.getLevel() * 525) {
+            LBPlayer playerData = MainEngines.getPlugin().getManager().getCache(uuid);
+            if (playerData.getExp() >= playerData.getLevel() * 525) {
                 Player player = Bukkit.getPlayer(uuid);
-                data.setLevel(data.getLevel() + 1);
-                data.setExp(0);
+                playerData.setLevel(playerData.getLevel() + 1);
+                playerData.setExp(0);
                 if (player != null) {
-                    player.sendMessage("§aParabéns, você alcançou o nível " + data.getLevel());
+                    player.sendMessage("§aParabéns, você alcançou o nível " + playerData.getLevel());
                     player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0F, 1.0F);
                 }
             }
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
-                LBPlayer data = MainEngines.getPlugin().getMySQL().getData(uuid);
-                if (data.getExp() >= data.getLevel() * 525) {
+                LBPlayer playerData = MainEngines.getPlugin().getMySQL().getData(uuid);
+                if (playerData.getExp() >= playerData.getLevel() * 525) {
                     try {
-                        MainEngines.getPlugin().getMySQL().setLevel(uuid, data.getLevel() + 1);
+                        MainEngines.getPlugin().getMySQL().setLevel(uuid, playerData.getLevel() + 1);
                         MainEngines.getPlugin().getMySQL().setExp(uuid, 0);
                     } catch (NullPointerException ex) {
                         console.sendMessage("§cLBEngines: Ocorreu um erro ao tentar upar o nível do jogador. O jogador não foi encontrado na base de dados.");
