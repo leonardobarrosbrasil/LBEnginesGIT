@@ -5,13 +5,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class LBManager {
 
     private static final HashMap<UUID, LBPlayer> cache = new HashMap<>();
+
+    private static final Map<UUID, Map<String, LBHomes>> homesCache = new HashMap<>();
 
     public ConsoleCommandSender console = Bukkit.getConsoleSender();
 

@@ -1,9 +1,9 @@
 package lb.engines.utils;
 
 import lb.engines.main.MainEngines;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.command.ConsoleCommandSender;
 
 public class LBPlaceholder extends PlaceholderExpansion {
@@ -35,7 +35,15 @@ public class LBPlaceholder extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
+        LBPlayer data = MainEngines.getPlugin().getManager().getCached(player.getUniqueId());
         switch (params) {
+            case "weddingtag":
+                if (!data.getPartner().equals(player.getUniqueId())) return "[❤]";
+            case "wedding":
+                if (data.getPartner().equals(player.getUniqueId())) return "ninguém";
+                return Bukkit.getOfflinePlayer(data.getPartner()).getName();
+            case "leveltag":
+                return "[Nível " + MainEngines.getPlugin().getManager().getCached(player.getUniqueId()).getLevel() + "]";
             case "level":
                 return String.valueOf(MainEngines.getPlugin().getManager().getCached(player.getUniqueId()).getLevel());
             case "exp":

@@ -118,7 +118,7 @@ public class LBMySQL {
             pstmt.setInt(8, 0); // eventParticipations
             pstmt.setInt(9, 0); // fightWins
             pstmt.setInt(10, 0); // fightDefeats
-            pstmt.setString(11, null); // fightDefeats
+            pstmt.setString(11, uuid.toString()); // partner
             pstmt.executeUpdate();
             pstmt.close();
         } catch (SQLException ex) {
@@ -154,8 +154,8 @@ public class LBMySQL {
             stm.setInt(7, data.getEventParticipations());
             stm.setInt(8, data.getFightWins());
             stm.setInt(9, data.getFightDefeats());
-            stm.setString(10, String.valueOf(data.getPartner()));
-            stm.setString(11, String.valueOf(uuid));
+            stm.setString(10, data.getPartner().toString());
+            stm.setString(11, uuid.toString());
             stm.executeUpdate();
             stm.close();
         } catch (SQLException ex) {
@@ -302,8 +302,8 @@ public class LBMySQL {
         if (!accountExist(uuid)) return null;
         try (Connection conn = hikariCP.getConnection()) {
             PreparedStatement stm = conn.prepareStatement(SET_PARTNER);
-            stm.setString(1, String.valueOf(value));
-            stm.setString(2, String.valueOf(uuid));
+            stm.setString(1, value.toString());
+            stm.setString(2, uuid.toString());
             stm.executeUpdate();
             stm.close();
             console.sendMessage("§a§aLBEngines: Valor `partner` de " + uuid + " definido para" + value + ".");
