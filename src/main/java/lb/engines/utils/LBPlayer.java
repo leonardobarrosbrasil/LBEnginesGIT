@@ -21,6 +21,8 @@ public class LBPlayer {
 
     private int questsPoints = 0;
 
+    private int seasonPoints = 0;
+
     private UUID partner;
 
     public void setMoney(double money) {
@@ -117,5 +119,13 @@ public class LBPlayer {
 
     public void setQuestsPoints(int questsPoints) {
         this.questsPoints = questsPoints;
+    }
+
+    public int getSeasonPoints() {
+        return this.seasonPoints;
+    }
+
+    public void setSeasonPoints(int seasonPoints) {
+        this.seasonPoints = seasonPoints;
     }
 }
