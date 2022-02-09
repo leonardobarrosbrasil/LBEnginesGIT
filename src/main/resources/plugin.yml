@@ -3,9 +3,12 @@ version: '1.0'
 main: lb.engines.main.MainEngines
 api-version: 1.16
 authors: [Dimensions]
-depend:
+softdepend:
   - PlaceholderAPI
 commands:
   salvar:
+    permission: lb.admin.save
+    permission-message: "§cVocê não tem permissão para fazer isto."
+  databasetest:
     permission: lb.admin.save
     permission-message: "§cVocê não tem permissão para fazer isto."

@@ -1,6 +1,7 @@
 package lb.engines.main;
 
 import lb.engines.commands.CommandSave;
+import lb.engines.commands.CommandTestDataBase;
 import lb.engines.events.OnPlayerJoin;
 import lb.engines.utils.*;
 import org.bukkit.Bukkit;
@@ -20,12 +21,13 @@ public final class MainEngines extends JavaPlugin {
         return instance;
     }
 
-    private LBMySQL SQL;
-    private LBManager Manager;
-    private LBFunctions Functions;
+    private static LBMySQL SQL;
+    private static LBManager Manager;
+    private static LBFunctions Functions;
 
     public void registerCommands() {
         CommandSave save = new CommandSave(this, "salvar");
+        CommandTestDataBase test = new CommandTestDataBase(this, "databasetest");
     }
 
     public void registerEvents() {
@@ -82,9 +84,9 @@ public final class MainEngines extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        this.SQL = new LBMySQL();
-        this.Manager = new LBManager();
-        this.Functions = new LBFunctions();
+        SQL = new LBMySQL();
+        Manager = new LBManager();
+        Functions = new LBFunctions();
         SQL.createTables();
         registerCommands();
         registerAutoSave();

@@ -16,39 +16,37 @@ public class LBMySQL {
 
     public final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `players` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER, `fightWins` INTEGER, `fightDefeats` INTEGER, `partner` varchar(255), `questsPoints` INTEGER, `seasonPoints` INTEGER)";
-    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations,fightWins,fightDefeats,partner,questsPoints,seasonPoints FROM players WHERE uuid = ?";
-    public final String CREATE_PLAYER = "INSERT INTO `players` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`,`fightWins`,`fightDefeats`,`partner`,`questsPoints`,`seasonPoints`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    public final String CHECK_PLAYER = "SELECT * FROM `players` WHERE `uuid` = ?";
-    public final String SET_ALL = "UPDATE `players` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ?, `fightWins` = ?, `fightDefeats` = ?, `partner` = ?, `questsPoints` = ?, `seasonPoints` = ? WHERE `uuid` = ?";
-    public final String SET_MONEY = "UPDATE `players` SET `money` = ? WHERE `uuid` = ?";
-    public final String SET_KILLS = "UPDATE `players` SET `kills` = ? WHERE `uuid` = ?";
-    public final String SET_DEATHS = "UPDATE `players` SET `deaths` = ? WHERE `uuid` = ?";
-    public final String SET_LEVEL = "UPDATE `players` SET `level` = ? WHERE `uuid` = ?";
-    public final String SET_EXP = "UPDATE `players` SET `exp` = ? WHERE `uuid` = ?";
-    public final String SET_EVENTWINS = "UPDATE `players` SET `eventWins` = ? WHERE `uuid` = ?";
-    public final String SET_EVENTPARTICIPATIONS = "UPDATE `players` SET `eventParticipations` = ? WHERE `uuid` = ?";
-    public final String SET_FIGHTWINS = "UPDATE `players` SET `fightWins` = ? WHERE `uuid` = ?";
-    public final String SET_FIGHTDEFEATS = "UPDATE `players` SET `fightDefeats` = ? WHERE `uuid` = ?";
-    public final String SET_PARTNER = "UPDATE `players` SET `partner` = ? WHERE `uuid` = ?";
-    public final String SET_QUESTSPOINTS = "UPDATE `players` SET `questsPoints` = ? WHERE `uuid` = ?";
-    public final String SET_SEASONPOINTS = "UPDATE `players` SET `seasonPoints` = ? WHERE `uuid` = ?";
+    public final String CREATE_TABLES = "CREATE TABLE IF NOT EXISTS `survival` (`uuid` varchar(255),`money` DOUBLE, `kills` INTEGER, `deaths` INTEGER, `level` INTEGER, `exp` INTEGER, `eventWins` INTEGER, `eventParticipations` INTEGER, `fightWins` INTEGER, `fightDefeats` INTEGER, `partner` varchar(255), `questsPoints` INTEGER, `seasonPoints` INTEGER)";
+    public final String SELECT_PLAYER = "SELECT uuid,money,kills,deaths,level,exp,eventWins,eventParticipations,fightWins,fightDefeats,partner,questsPoints,seasonPoints FROM survival WHERE uuid = ?";
+    public final String CREATE_PLAYER = "INSERT INTO `survival` (`uuid`, `money`, `kills`, `deaths`,`level`,`exp`,`eventWins`,`eventParticipations`,`fightWins`,`fightDefeats`,`partner`,`questsPoints`,`seasonPoints`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public final String CHECK_PLAYER = "SELECT * FROM `survival` WHERE `uuid` = ?";
+    public final String SET_ALL = "UPDATE `survival` SET `money` = ?, `kills` = ?, `deaths` = ?, `level` = ?, `exp` = ?, `eventWins` = ?, `eventParticipations` = ?, `fightWins` = ?, `fightDefeats` = ?, `partner` = ?, `questsPoints` = ?, `seasonPoints` = ? WHERE `uuid` = ?";
+    public final String SET_MONEY = "UPDATE `survival` SET `money` = ? WHERE `uuid` = ?";
+    public final String SET_KILLS = "UPDATE `survival` SET `kills` = ? WHERE `uuid` = ?";
+    public final String SET_DEATHS = "UPDATE `survival` SET `deaths` = ? WHERE `uuid` = ?";
+    public final String SET_LEVEL = "UPDATE `survival` SET `level` = ? WHERE `uuid` = ?";
+    public final String SET_EXP = "UPDATE `survival` SET `exp` = ? WHERE `uuid` = ?";
+    public final String SET_EVENTWINS = "UPDATE `survival` SET `eventWins` = ? WHERE `uuid` = ?";
+    public final String SET_EVENTPARTICIPATIONS = "UPDATE `survival` SET `eventParticipations` = ? WHERE `uuid` = ?";
+    public final String SET_FIGHTWINS = "UPDATE `survival` SET `fightWins` = ? WHERE `uuid` = ?";
+    public final String SET_FIGHTDEFEATS = "UPDATE `survival` SET `fightDefeats` = ? WHERE `uuid` = ?";
+    public final String SET_PARTNER = "UPDATE `survival` SET `partner` = ? WHERE `uuid` = ?";
+    public final String SET_QUESTSPOINTS = "UPDATE `survival` SET `questsPoints` = ? WHERE `uuid` = ?";
+    public final String SET_SEASONPOINTS = "UPDATE `survival` SET `seasonPoints` = ? WHERE `uuid` = ?";
 
     private HikariDataSource hikariCP;
 
     public LBMySQL() {
         HikariConfig config = new HikariConfig();
-        config.setUsername("root");
-        config.setPassword("");
+        config.setUsername("survival");
+        config.setPassword("surleo9887345");
         hikariCP = new HikariDataSource();
         hikariCP.setIdleTimeout(870000000);
         hikariCP.setMaxLifetime(870000000);
         hikariCP.setConnectionTimeout(870000000);
         //hikariCP.setRegisterMbeans(true);
         hikariCP.setMaximumPoolSize(10);
-        String host = "localhost";
-        config.setJdbcUrl("jdbc:mysql://" +
-                "127.0.0.1:3306/" + "phpmyadmin");
+        config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/survival?user=survival&password=surleo9887345&useSSL=false");
         hikariCP = new HikariDataSource(config);
         console.sendMessage("§aLBEngines: Database conectada com sucesso.");
     }

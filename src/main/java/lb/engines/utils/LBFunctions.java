@@ -12,6 +12,11 @@ public class LBFunctions {
 
     private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
+    public int getExpRemaing(UUID uuid) {
+        LBPlayer playerData = MainEngines.getPlugin().getManager().getCached(uuid);
+        return playerData.getLevel() * 525;
+    }
+
     public void isElegible(UUID uuid) {
         if (MainEngines.getPlugin().getManager().hasCache(uuid)) {
             LBPlayer playerData = MainEngines.getPlugin().getManager().getCache(uuid);

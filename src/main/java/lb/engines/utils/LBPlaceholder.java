@@ -2,29 +2,29 @@ package lb.engines.utils;
 
 import lb.engines.main.MainEngines;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.ConsoleCommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class LBPlaceholder extends PlaceholderExpansion {
 
-    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final MainEngines plugin;
 
     public LBPlaceholder(MainEngines plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return "Dimensions";
     }
 
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "LBEngines";
     }
 
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return "1.0";
     }
 
@@ -37,17 +37,16 @@ public class LBPlaceholder extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, String params) {
         LBPlayer data = MainEngines.getPlugin().getManager().getCached(player.getUniqueId());
         switch (params) {
-            case "weddingtag":
-                if (!data.getPartner().equals(player.getUniqueId())) return "[❤]";
-            case "weddingpartner":
-                if (data.getPartner().equals(player.getUniqueId())) return "ninguém";
-                return Bukkit.getOfflinePlayer(data.getPartner()).getName();
-            case "leveltag":
-                return "[Nível " + MainEngines.getPlugin().getManager().getCached(player.getUniqueId()).getLevel() + "]";
+            case "wedding_tag":
+                if (!data.getPartner().equals(player.getUniqueId())) return "[❤] ";
+            case "level_tag":
+                return "[Nvl " + MainEngines.getPlugin().getManager().getCached(player.getUniqueId()).getLevel() + "] ";
             case "level":
                 return String.valueOf(MainEngines.getPlugin().getManager().getCached(player.getUniqueId()).getLevel());
             case "exp":
                 return String.valueOf(MainEngines.getPlugin().getManager().getCached(player.getUniqueId()).getExp());
+            case "exp_remaining":
+                return String.valueOf(MainEngines.getPlugin().getFunctions().getExpRemaing(player.getUniqueId()));
             default:
                 return null; // Placeholder is unknown by the Expansion
         }
