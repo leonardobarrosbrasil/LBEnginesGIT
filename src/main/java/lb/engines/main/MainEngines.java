@@ -1,7 +1,6 @@
 package lb.engines.main;
 
 import lb.engines.commands.CommandSave;
-import lb.engines.commands.CommandTestDataBase;
 import lb.engines.events.OnPlayerJoin;
 import lb.engines.utils.*;
 import org.bukkit.Bukkit;
@@ -27,7 +26,6 @@ public final class MainEngines extends JavaPlugin {
 
     public void registerCommands() {
         CommandSave save = new CommandSave(this, "salvar");
-        CommandTestDataBase test = new CommandTestDataBase(this, "databasetest");
     }
 
     public void registerEvents() {

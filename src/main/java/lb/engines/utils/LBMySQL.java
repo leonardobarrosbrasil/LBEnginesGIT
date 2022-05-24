@@ -39,14 +39,14 @@ public class LBMySQL {
     public LBMySQL() {
         HikariConfig config = new HikariConfig();
         config.setUsername("survival");
-        config.setPassword("surleo9887345");
+        config.setPassword("+EyUHQy#0eAQ76]");
         hikariCP = new HikariDataSource();
         hikariCP.setIdleTimeout(870000000);
         hikariCP.setMaxLifetime(870000000);
         hikariCP.setConnectionTimeout(870000000);
         //hikariCP.setRegisterMbeans(true);
         hikariCP.setMaximumPoolSize(10);
-        config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/survival?user=survival&password=surleo9887345&useSSL=false");
+        config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/survival?user=survival&password=+EyUHQy#0eAQ76]&useSSL=false");
         hikariCP = new HikariDataSource(config);
         console.sendMessage("§aLBEngines: Database conectada com sucesso.");
     }

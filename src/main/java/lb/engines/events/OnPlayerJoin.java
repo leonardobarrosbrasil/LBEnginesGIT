@@ -13,9 +13,12 @@ public class OnPlayerJoin implements Listener {
 
     public ConsoleCommandSender console = Bukkit.getConsoleSender();
 
+
+
     @EventHandler
-    public void onLogin(PlayerJoinEvent event) {
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        player.sendTitle("§a§lBEM VINDO", "Logue-se usando /login <senha>", 10, 10000000, 10);
         if (MainEngines.getPlugin().getManager().hasCache(player.getUniqueId())) return;
         Bukkit.getScheduler().runTaskAsynchronously(MainEngines.getPlugin(), () -> {
             if (!MainEngines.getPlugin().getMySQL().accountExist(player.getUniqueId()))
